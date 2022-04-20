@@ -1,0 +1,104 @@
+{
+    "profiles": [
+        {
+            "docker_repo_name": "wso2-obam",
+            "product": "wso2-obam",
+            "profile": "",
+            "product_profile_docker_home": "obam",
+            "versions": [
+                {
+                    "product_version": "1.4.0",
+                    "docker_release_version": "1.4.0.8",
+                    "latest": false
+                },
+                {
+                    "product_version": "1.5.0",
+                    "docker_release_version": "1.5.0.2",
+                    "latest": false
+                },
+                {
+                    "product_version": "2.0.0",
+                    "docker_release_version": "2.0.0.3",
+                    "latest": false
+                }
+            ]
+        },
+        {
+            "docker_repo_name": "wso2-obbi-worker",
+            "product": "wso2-obbi",
+            "profile": "worker",
+            "product_profile_docker_home": "obbi/worker",
+            "versions": [
+                {
+                    "product_version": "1.4.0",
+                    "docker_release_version": "1.4.0.8",
+                    "latest": false
+                },
+                {
+                    "product_version": "1.5.0",
+                    "docker_release_version": "1.5.0.2",
+                    "latest": false
+                },
+                {
+                    "product_version": "2.0.0",
+                    "docker_release_version": "2.0.0.3",
+                    "latest": true
+                }
+            ]
+        },
+        {
+            "docker_repo_name": "wso2-obbi-dashboard",
+            "product": "wso2-obbi",
+            "profile": "dashboard",
+            "product_profile_docker_home": "obbi/dashboard",
+            "versions": [
+                {
+                    "product_version": "1.4.0",
+                    "docker_release_version": "1.4.0.8",
+                    "latest": false
+                },
+                {
+                    "product_version": "1.5.0",
+                    "docker_release_version": "1.5.0.2",
+                    "latest": false
+                },
+                {
+                    "product_version": "2.0.0",
+                    "docker_release_version": "2.0.0.3",
+                    "latest": true
+                }
+            ]
+        },
+        {
+            "docker_repo_name": "wso2-obkm",
+            "product": "wso2-obkm",
+            "profile": "",
+            "product_profile_docker_home": "obkm",
+            "versions": [
+                {
+                    "product_version": "1.4.0",
+                    "docker_release_version": "1.4.0.8",
+                    "latest": false
+                },
+                {
+                    "product_version": "1.5.0",
+                    "docker_release_version": "1.5.0.2",
+                    "latest": true
+                }
+            ]
+        },
+        {
+            "docker_repo_name": "wso2-obiam",
+            "product": "wso2-obiam",
+            "profile": "",
+            "product_profile_docker_home": "obiam",
+            "versions": [
+                {
+                    "product_version": "2.0.0",
+                    "docker_release_version": "2.0.0.3",
+                    "latest": false
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,134 @@
+{
+  "profiles": [
+    {
+      "docker_repo_name": "wso2am",
+      "product": "wso2am",
+      "profile": "",
+      "product_profile_docker_home": "apim",
+      "versions": [
+        {
+          "product_version": "2.6.0",
+          "docker_release_version": "2.6.0.19",
+          "latest": false,
+          "multi_jdk_required": false
+        },
+        {
+          "product_version": "3.0.0",
+          "docker_release_version": "3.0.0.5",
+          "latest": false,
+          "multi_jdk_required": false
+        },
+        {
+          "product_version": "3.1.0",
+          "docker_release_version": "3.1.0.6",
+          "latest": false,
+          "multi_jdk_required": false
+        },
+        {
+          "product_version": "3.2.0",
+          "docker_release_version": "3.2.0.5",
+          "latest": false,
+          "multi_jdk_required": false
+        },
+        {
+          "product_version": "4.0.0",
+          "docker_release_version": "4.0.0.4",
+          "latest": true,
+          "multi_jdk_required": true
+        }
+      ]
+    },
+    {
+      "docker_repo_name": "wso2am-micro-gw",
+      "product": "wso2am-micro-gw",
+      "profile": "",
+      "product_profile_docker_home": "mg",
+      "versions": [
+        {
+          "product_version": "3.2.0",
+          "docker_release_version": "3.2.1.1",
+          "latest": true
+        }
+      ]
+    },
+    {
+      "docker_repo_name": "wso2am-analytics-dashboard",
+      "product": "wso2am-analytics",
+      "profile": "dashboard",
+      "product_profile_docker_home": "apim-analytics/dashboard",
+      "versions": [
+        {
+          "product_version": "2.6.0",
+          "docker_release_version": "2.6.0.19",
+          "latest": false
+        },
+        {
+          "product_version": "3.0.0",
+          "docker_release_version": "3.0.0.5",
+          "latest": false
+        },
+        {
+          "product_version": "3.1.0",
+          "docker_release_version": "3.1.0.6",
+          "latest": false
+        },
+        {
+          "product_version": "3.2.0",
+          "docker_release_version": "3.2.0.5",
+          "latest": true
+        }
+      ]
+    },
+    {
+      "docker_repo_name": "wso2am-analytics-worker",
+      "product": "wso2am-analytics",
+      "profile": "worker",
+      "product_profile_docker_home": "apim-analytics/worker",
+      "versions": [
+        {
+          "product_version": "2.6.0",
+          "docker_release_version": "2.6.0.19",
+          "latest": false
+        },
+        {
+          "product_version": "3.0.0",
+          "docker_release_version": "3.0.0.5",
+          "latest": false
+        },
+        {
+          "product_version": "3.1.0",
+          "docker_release_version": "3.1.0.6",
+          "latest": false
+        },
+        {
+          "product_version": "3.2.0",
+          "docker_release_version": "3.2.0.5",
+          "latest": true
+        }
+      ]
+    },
+    {
+      "docker_repo_name": "wso2is-km",
+      "product": "wso2is-km",
+      "profile": "",
+      "product_profile_docker_home": "is-as-km",
+      "versions": [
+        {
+          "product_version": "5.7.0",
+          "docker_release_version": "2.6.0.17",
+          "latest": false
+        },
+        {
+          "product_version": "5.9.0",
+          "docker_release_version": "3.0.0.3",
+          "latest": false
+        },
+        {
+          "product_version": "5.10.0",
+          "docker_release_version": "3.1.0.5",
+          "latest": true
+        }
+      ]
+    }
+  ]
+}
