@@ -193,29 +193,81 @@ function create_scan_report() {
                 if [[ $jdk_version == "jdk11" ]]; then
                     trivy image --severity "$severity" --ignorefile "$ignorefile_path" --timeout "$timeout" docker.wso2.com/$wso2_product_name:$wso2_product_release_version | tee "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
                     check_vulnerabilities_for_product $os
+                    OS_result=$(grep "docker.wso2.com/$wso2_product_name:$wso2_product_release_version" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
+                    jar_result=$(grep "Java" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
+
+                    getVulnerableCount "$OS_result"
+                    getVulnerableCount "$jar_result"
+                    getImageVulnerabilitySummary "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
+
+                    summary+=${#release_tag}
+                    echo -e $summary >> summaryText.txt
                 else
                     trivy image --severity "$severity" --ignorefile "$ignorefile_path" --timeout "$timeout" docker.wso2.com/$wso2_product_name:$wso2_product_release_version-$jdk_version | tee "$wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt"
                     check_vulnerabilities_for_product_with_jdk $os $jdk_version
+                    OS_result=$(grep "docker.wso2.com/$wso2_product_name:$wso2_product_release_version" -A 3 $wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt | grep "Total") 
+                    jar_result=$(grep "Java" -A 3 $wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt | grep "Total")
+                    
+                    getVulnerableCount "$OS_result"
+                    getVulnerableCount "$jar_result"
+                    getImageVulnerabilitySummary "$wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt"
+
+                    summary+=${#release_tag}
+                    echo -e $summary >> summaryText.txt
                 fi
             else
                 trivy image --severity "$severity" --ignorefile "$ignorefile_path" --timeout "$timeout" docker.wso2.com/$wso2_product_name:$wso2_product_release_version | tee "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
                 check_vulnerabilities_for_product $os
+                OS_result=$(grep "docker.wso2.com/$wso2_product_name:$wso2_product_release_version" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total") 
+                jar_result=$(grep "Java" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
+                
+                getVulnerableCount "$OS_result"
+                getVulnerableCount "$jar_result"
+                getImageVulnerabilitySummary "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
+
+                summary+=${#release_tag}
+                echo -e $summary >> summaryText.txt
             fi
         else
             echo "scanning ${os}"
             if [[ $multi_jdk_required == true ]]; then
                 if [[ $jdk_version == "jdk11" ]]; then
-                  trivy image --severity "$severity" --ignorefile "$ignorefile_path" --timeout "$timeout" docker.wso2.com/$wso2_product_name:$wso2_product_release_version-$os | tee "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
-                  check_vulnerabilities_for_product $os
+                    trivy image --severity "$severity" --ignorefile "$ignorefile_path" --timeout "$timeout" docker.wso2.com/$wso2_product_name:$wso2_product_release_version-$os | tee "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
+                    check_vulnerabilities_for_product $os
+                    OS_result=$(grep "docker.wso2.com/$wso2_product_name:$wso2_product_release_version" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total") 
+                    jar_result=$(grep "Java" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
+                    
+                    getVulnerableCount "$OS_result"
+                    getVulnerableCount "$jar_result"
+                    getImageVulnerabilitySummary "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
+
+                    summary+=${#release_tag}
+                    echo -e $summary >> summaryText.txt
                 else
-                  trivy image --severity "$severity" --ignorefile "$ignorefile_path" --timeout "$timeout" docker.wso2.com/$wso2_product_name:$wso2_product_release_version-$os-$jdk_version | tee "$wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt"
-                  check_vulnerabilities_for_product_with_jdk $os $jdk_version
+                    trivy image --severity "$severity" --ignorefile "$ignorefile_path" --timeout "$timeout" docker.wso2.com/$wso2_product_name:$wso2_product_release_version-$os-$jdk_version | tee "$wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt"
+                    check_vulnerabilities_for_product_with_jdk $os $jdk_version
+                    OS_result=$(grep "docker.wso2.com/$wso2_product_name:$wso2_product_release_version" -A 3 $wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt | grep "Total") 
+                    jar_result=$(grep "Java" -A 3 $wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt | grep "Total")
+                    getVulnerableCount "$OS_result"
+                    getVulnerableCount "$jar_result"
+                    getImageVulnerabilitySummary "$wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt"
+
+                    summary+=${#release_tag}
+                    echo -e $summary >> summaryText.txt
                 fi
             else
-              trivy image --severity "$severity" --ignorefile "$ignorefile_path" --timeout "$timeout" docker.wso2.com/$wso2_product_name:$wso2_product_release_version-$os | tee "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
-              check_vulnerabilities_for_product $os
+                trivy image --severity "$severity" --ignorefile "$ignorefile_path" --timeout "$timeout" docker.wso2.com/$wso2_product_name:$wso2_product_release_version-$os | tee "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
+                check_vulnerabilities_for_product $os
+                OS_result=$(grep "docker.wso2.com/$wso2_product_name:$wso2_product_release_version" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total") 
+                jar_result=$(grep "Java" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
+                getVulnerableCount "$OS_result"
+                getVulnerableCount "$jar_result"
+                getImageVulnerabilitySummary "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
+
+                summary+=${#release_tag}
+                echo -e $summary >> summaryText.txt
             fi
-        fi   
+        fi  
     elif [[ $wso2_product_name == "wso2is" ]]; then
         if [ $os == 'ubuntu' ]; then
             echo "scanning ubuntu"
