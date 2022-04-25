@@ -40,26 +40,7 @@ def call(product_key) {
             WSO2_UPDATES_SKIP_MIGRATIONS = "true"
         }
         stages {
-            stage('clean-workspace') {
-                steps {
-                    deleteDir()
-                }
-            }
-            stage('download-product-packs-from-s3') {
-                steps {
-                    script {
-                        //withCredentials([usernamePassword(credentialsId: 'aws-s3-wso2-installers-resources',passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                            sh """
-                            export WSO2_PRODUCT='$wso2_product'
-                            export WSO2_PRODUCT_VERSION='$wso2_product_version'
-                            aws s3 cp --quiet s3://wso2-installers-resources/updates2.0/${WSO2_PRODUCT}/${WSO2_PRODUCT_VERSION}/${WSO2_PRODUCT}-${WSO2_PRODUCT_VERSION}.zip .
-                            unzip -q ${WSO2_PRODUCT}-${WSO2_PRODUCT_VERSION}.zip
-                            rm -rf ${WSO2_PRODUCT}-${WSO2_PRODUCT_VERSION}.zip
-                            """
-//                        }
-                    }
-                }
-            }
+           
             stage('download-ob-certs-from-s3') {
                 when {
                     // Download OB certs for OB accelerators
