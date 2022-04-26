@@ -29,6 +29,7 @@ def call(product_key) {
     def failure_map = [:]
     def severity
     def timeout = "15m"
+    def chat_notify
 
     pipeline {
         agent {
@@ -61,6 +62,7 @@ def call(product_key) {
                         product_profile_docker_homes = build_script.get_product_docker_home(wso2_product, wso2_product_version)
                         build_script.get_docker_release_version(wso2_product, wso2_product_version, product_key, product_profile_docker_homes)
                         timestamp = build_script.get_latest_wum_timestamp(wso2_product, wso2_product_version)
+                        chat_notify = build_script.get_chat_notification_status(product_key)
                         if (product_key == "open-banking") {
                             os_platforms = [alpine: '3.15', ubuntu: '20.04']
                         } else {
@@ -103,7 +105,7 @@ def call(product_key) {
                     String summaryBody   = readFile "summaryOut.txt"
                     String emailBodyScan = readFile "scanResult.txt"
 
-                    String body = summaryBody + "\n \n \n" + emailBodyScan
+                    String body = "\n" + summaryBody + "\n \n \n" + emailBodyScan
                     if ( timestamp != 'wum_timestamp=GA' ) {
                             timestamp = readFile "wum_details.txt"
                     }
@@ -122,10 +124,10 @@ def call(product_key) {
                     </p><br>
                     <p>Check console output at ${BUILD_URL} to view the results.</p>
                 """)
-
-                    summaryBody = "```"+summaryBody+"```"
-                    googlechatnotification url: "${google_chat_webhook}", message: "${summaryBody}"
-
+                    if (chat_notify) {
+                        summaryBody = "```"+summaryBody+"```"
+                        googlechatnotification url: "${google_chat_webhook}", message: "${summaryBody}"
+                    }
                     cleanup_script = libraryResource "${SCRIPT_FILE_LOCATION}/cleanup.sh"
                     writeFile file: './cleanup.sh', text: cleanup_script
                     sh 'chmod +x ${WORKSPACE}/cleanup.sh'

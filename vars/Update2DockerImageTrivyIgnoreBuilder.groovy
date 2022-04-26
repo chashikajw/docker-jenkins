@@ -29,6 +29,7 @@ def call(product_key) {
     def failure_map = [:]
     def severity
     def timeout = "15m"
+    def chat_notify
     
     pipeline {
         agent {
@@ -40,7 +41,26 @@ def call(product_key) {
             WSO2_UPDATES_SKIP_MIGRATIONS = "true"
         }
         stages {
-           
+            stage('clean-workspace') {
+                steps {
+                    deleteDir()
+                }
+            }
+            stage('download-product-packs-from-s3') {
+                steps {
+                    script {
+                        //withCredentials([usernamePassword(credentialsId: 'aws-s3-wso2-installers-resources',passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                            sh """
+                            export WSO2_PRODUCT='$wso2_product'
+                            export WSO2_PRODUCT_VERSION='$wso2_product_version'
+                            aws s3 cp --quiet s3://wso2-installers-resources/updates2.0/${WSO2_PRODUCT}/${WSO2_PRODUCT_VERSION}/${WSO2_PRODUCT}-${WSO2_PRODUCT_VERSION}.zip .
+                            unzip -q ${WSO2_PRODUCT}-${WSO2_PRODUCT_VERSION}.zip
+                            rm -rf ${WSO2_PRODUCT}-${WSO2_PRODUCT_VERSION}.zip
+                            """
+//                        }
+                    }
+                }
+            }
             stage('download-ob-certs-from-s3') {
                 when {
                     // Download OB certs for OB accelerators
@@ -161,6 +181,7 @@ def call(product_key) {
                         product_profile_docker_homes = build_script.get_product_docker_home_update2(wso2_product, wso2_product_version)
                         build_script.get_docker_release_version_update2(wso2_product, wso2_product_version, product_key, product_profile_docker_homes)
                         update_level = build_script.get_update_level(wso2_product, wso2_product_version)
+                        chat_notify = build_script.get_chat_notification_status_update2(product_key)
                         if (product_key == "open-banking") {
                             os_platforms = [alpine: '3.10', ubuntu: '18.04']
                         } else {
@@ -203,7 +224,7 @@ def call(product_key) {
                     String summaryBody   = readFile "summaryOut.txt"
                     String emailBodyScan = readFile "scanResult.txt"
 
-                    String body = summaryBody + "\n \n \n" + emailBodyScan
+                    String body = "\n"+ summaryBody + "\n \n \n" + emailBodyScan
 
                     send("[ ${currentBuild.currentResult} ] in Docker Image Build for U2 : ${wso2_product}-${wso2_product_version} - #${env.BUILD_NUMBER}", """
                     <font color="black"><b>--------Build Info--------</b></font></p><br>
@@ -224,9 +245,10 @@ def call(product_key) {
                     sh 'chmod +x ${WORKSPACE}/cleanup.sh'
                     sh '${WORKSPACE}/cleanup.sh $wso2_product $wso2_product_version'
 
-                    summaryBody = "```"+summaryBody+"```"
-                    googlechatnotification url: "${google_chat_webhook}", message: "${summaryBody}"
-
+                    if (chat_notify) {
+                        summaryBody = "```"+summaryBody+"```"
+                        googlechatnotification url: "${google_chat_webhook}", message: "${summaryBody}"
+                    }
                 }
             }
         }

@@ -567,6 +567,8 @@ def get_severity(wso2_product, wso2_product_version){
         } else {
             return "MEDIUM,HIGH,CRITICAL"        
         }
+    } else if(wso2_product == "wso2am") {
+       return "MEDIUM,HIGH,CRITICAL"
     } else {
         return "MEDIUM,HIGH,CRITICAL"
     }
@@ -808,4 +810,26 @@ def image_build_handler_with_tag(wso2_product, wso2_product_version, os_platform
     tag_images(image, image_tags)
 
     return [image_map,docker_tag,return_profile]
+}
+
+def get_chat_notification_status(product_key) {
+    println "Checking whether the Google Chat Notification needs to be sent..."
+    CONF_FILE_LOCATION = "org/wso2/ie/conf"
+    product_data_script = libraryResource "${CONF_FILE_LOCATION}/${product_key}-data.json"
+    writeFile file: "./${product_key}-data.json", text: product_data_script
+    config_file = readJSON file: "${product_key}-data.json"
+    chat_notify = config_file.chat_notification
+
+    return chat_notify
+}
+
+def get_chat_notification_status_update2(product_key){
+    println "Checking whether the Google Chat Notification needs to be sent..."
+    CONF_FILE_LOCATION = "org/wso2/ie/conf/update2"
+    product_data_script = libraryResource "${CONF_FILE_LOCATION}/${product_key}-data.json"
+    writeFile file: "./${product_key}-data.json", text: product_data_script
+    config_file = readJSON file: "${product_key}-data.json"
+    chat_notify = config_file.chat_notification
+
+    return chat_notify
 }

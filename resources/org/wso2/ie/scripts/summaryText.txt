@@ -1,2 +1,0 @@
-wso2am:3.2.0 ubuntu jdk11 0 0 0 0 0 12
-wso2am:3.2.0 alpine jdk11 0 0 0 0 0 12
