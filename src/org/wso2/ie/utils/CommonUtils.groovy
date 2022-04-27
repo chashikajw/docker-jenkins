@@ -632,9 +632,9 @@ def generateReleaseCell(tag, os, length, max_len){
     arr.push("|" + " ".multiply(max_len+2) + "|" + " ".multiply(8) + "+" + "-".multiply(12) + "+")
     arr.push("|" + " ".multiply(((max_len-length.toInteger()).intdiv(2))+1) + tag + " ".multiply(1 + max_len - ((max_len - length.toInteger()).intdiv(2)) - length.toInteger()) + "|" + " "+os.toUpperCase() + " " + "|" + " ".multiply(4) + "APP" + " ".multiply(5) + "|")
     arr.push("|" + " ".multiply(max_len+2) + "|" + " ".multiply(8) + "+" + "-".multiply(12) + "+")
+    arr.push("|" + " ".multiply(max_len+2) + "|" + " ".multiply(8) + "|" + " ".multiply(5) + "UI" + " ".multiply(5) + "|")
+    arr.push("|" + " ".multiply(max_len+2) + "|" + " ".multiply(8) + "+" + "-".multiply(12) + "+")
     arr.push("|" + " ".multiply(max_len+2) + "|" + " ".multiply(8) + "|" + " " + "INSTALLERS" + " " + "|")
-    arr.push("+" + "-".multiply(max_len+2) + "+" + "-".multiply(8) + "+" + "-".multiply(12) + "+")
-    arr.push("|" + " ".multiply(max_len+2) + "|" + " ".multiply(8) + "|" + " " + "UI" + " " + "|")
     arr.push("+" + "-".multiply(max_len+2) + "+" + "-".multiply(8) + "+" + "-".multiply(12) + "+")
     return arr
 }
