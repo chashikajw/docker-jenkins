@@ -634,6 +634,8 @@ def generateReleaseCell(tag, os, length, max_len){
     arr.push("|" + " ".multiply(max_len+2) + "|" + " ".multiply(8) + "+" + "-".multiply(12) + "+")
     arr.push("|" + " ".multiply(max_len+2) + "|" + " ".multiply(8) + "|" + " " + "INSTALLERS" + " " + "|")
     arr.push("+" + "-".multiply(max_len+2) + "+" + "-".multiply(8) + "+" + "-".multiply(12) + "+")
+    arr.push("|" + " ".multiply(max_len+2) + "|" + " ".multiply(8) + "|" + " " + "UI" + " " + "|")
+    arr.push("+" + "-".multiply(max_len+2) + "+" + "-".multiply(8) + "+" + "-".multiply(12) + "+")
     return arr
 }
 
@@ -653,12 +655,17 @@ def generateRows(row_data, max_len, severity, outFile){
         installer_total = generateCell(7, row_data[7])
         installer_critical = generateCell(10,row_data[8])
 
+        ui_total = generateCell(7, row_data[9])
+        ui_critical = generateCell(10,row_data[10])
+
         outFile += (release_cell[0] + os_total[0] + os_critical[0] + "\n")
         outFile += (release_cell[1] + os_total[1] + os_critical[1] + "\n")
         outFile += (release_cell[2] + app_total[0] + app_critical[0] + "\n")
         outFile += (release_cell[3] + app_total[1] + app_critical[1] + "\n")
         outFile += (release_cell[4] + installer_total[0] + installer_critical[0] + "\n")
         outFile += (release_cell[5] + installer_total[1] + installer_critical[1] + "\n")
+        outFile += (release_cell[6] + ui_total[0] + ui_critical[0] + "\n")
+        outFile += (release_cell[7] + ui_total[1] + ui_critical[1] + "\n")
     }
     else if (severity == "HIGH,CRITICAL"){
 
@@ -674,12 +681,18 @@ def generateRows(row_data, max_len, severity, outFile){
         installer_critical = generateCell(10, row_data[11])
         installer_high = generateCell(6, row_data[10])
 
+        ui_total = generateCell(7, row_data[12])
+        ui_critical = generateCell(10, row_data[14])
+        ui_high = generateCell(6, row_data[13])
+
         outFile += (release_cell[0] + os_total[0] + os_critical[0] + os_high[0] + "\n")
         outFile += (release_cell[1] + os_total[1] + os_critical[1] + os_high[1] + "\n")
         outFile += (release_cell[2] + app_total[0] + app_critical[0] + app_high[0] + "\n")
         outFile += (release_cell[3] + app_total[1] + app_critical[1] + app_high[1] + "\n")
         outFile += (release_cell[4] + installer_total[0] + installer_critical[0] + installer_high[0] + "\n")
         outFile += (release_cell[5] + installer_total[1] + installer_critical[1] + installer_high[1] + "\n")
+        outFile += (release_cell[6] + ui_total[0] + ui_critical[0] + ui_high[0] + "\n")
+        outFile += (release_cell[7] + ui_total[1] + ui_critical[1] + ui_high[1] + "\n")
     }
     else if (severity == "MEDIUM,HIGH,CRITICAL"){
 
@@ -698,12 +711,19 @@ def generateRows(row_data, max_len, severity, outFile){
         installer_high = generateCell(6, row_data[13])
         installer_medium = generateCell(8, row_data[12])
 
+        ui_total = generateCell(7, row_data[15])
+        ui_critical = generateCell(10, row_data[18])
+        ui_high = generateCell(6, row_data[17])
+        ui_medium = generateCell(8, row_data[16])
+
         outFile += (release_cell[0] + os_total[0] + os_critical[0] + os_high[0] + os_medium[0] + "\n")
         outFile += (release_cell[1] + os_total[1] + os_critical[1] + os_high[1] + os_medium[1] + "\n")
         outFile += (release_cell[2] + app_total[0] + app_critical[0] + app_high[0] + app_medium[0] + "\n")
         outFile += (release_cell[3] + app_total[1] + app_critical[1] + app_high[1] + app_medium[1] + "\n")
         outFile += (release_cell[4] + installer_total[0] + installer_critical[0] + installer_high[0] + installer_medium[0] + "\n")
         outFile += (release_cell[5] + installer_total[1] + installer_critical[1] + installer_high[1] + installer_medium[1] + "\n")
+        outFile += (release_cell[6] + ui_total[0] + ui_critical[0] + ui_high[0] + ui_medium[0] + "\n")
+        outFile += (release_cell[7] + ui_total[1] + ui_critical[1] + ui_high[1] + ui_medium[1] + "\n")
     }
 
     return outFile
