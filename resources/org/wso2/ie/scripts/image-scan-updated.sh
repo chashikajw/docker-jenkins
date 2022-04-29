@@ -383,12 +383,8 @@ function create_scan_report() {
             check_vulnerabilities_for_product $os
         fi
     fi
-
-    if () {
-
-    }
-    if 
-        isCriticalVulnarabilityExist == true: then
+    
+    if isCriticalVulnarabilityExist == true; then
         return 1
     fi
 }
