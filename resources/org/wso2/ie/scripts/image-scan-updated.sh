@@ -32,6 +32,7 @@ readonly severity=$9
 readonly wso2_product_version=${10}
 readonly timeout=${11}
 summary=""
+isCriticalVulnarabilityExist = false
 
 if [[ "${severity}" == "CRITICAL" ]]; then
     installer_arr=(0 0)
@@ -45,12 +46,16 @@ fi
 
 function getInstallerVulnerableCount(){
   input="$1"
+  vulnarabiltyType ="$2"
 
   IFS=' ' read -ra arr <<< "$input"
   
   if [[ "${severity}" == "CRITICAL" ]]; then
       if [[ "${arr[0]}" == "Total:" ]]; then
-          installer_arr[0]="$((${installer_arr[0]}+${arr[1]}))" 
+          installer_arr[0]="$((${installer_arr[0]}+${arr[1]}))"
+          if installer_arr[3] > 0 && vulnarabiltyType == "Java"; then
+            isCriticalVulnarabilityExist = true
+          fi 
       fi
       if [[ "${arr[2]}" == "(CRITICAL:" ]]; then
           installer_arr[1]="$((${installer_arr[1]}+${arr[3]%?}))" 
@@ -63,7 +68,10 @@ function getInstallerVulnerableCount(){
           installer_arr[1]="$((${installer_arr[1]}+${arr[3]%?}))" 
       fi
       if [[ "${arr[4]}" == "CRITICAL:" ]]; then
-          installer_arr[2]="$((${installer_arr[2]}+${arr[5]%?}))" 
+          installer_arr[2]="$((${installer_arr[2]}+${arr[5]%?}))"
+          if installer_arr[3] > 0 && vulnarabiltyType == "Java"; then
+            isCriticalVulnarabilityExist = true
+          fi 
       fi
   elif [[ "${severity}" == "MEDIUM,HIGH,CRITICAL" ]]; then 
       if [[ "${arr[0]}" == "Total:" ]]; then
@@ -76,7 +84,11 @@ function getInstallerVulnerableCount(){
           installer_arr[2]="$((${installer_arr[2]}+${arr[5]%?}))" 
       fi
       if [[ "${arr[6]}" == "CRITICAL:" ]]; then
-          installer_arr[3]="$((${installer_arr[3]}+${arr[7]%?}))" 
+          installer_arr[3]="$((${installer_arr[3]}+${arr[7]%?}))"
+          if installer_arr[3] > 0 && vulnarabiltyType == "Java"; then
+            isCriticalVulnarabilityExist = true
+          fi
+
       fi
   fi
 
@@ -197,9 +209,9 @@ function create_scan_report() {
                     jar_result=$(grep "Java" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
                     ui_result=$(grep "package-lock.json" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
 
-                    getVulnerableCount "$OS_result"
-                    getVulnerableCount "$jar_result"
-                    getVulnerableCount "$ui_result"
+                    getVulnerableCount "$OS_result" "OS"
+                    getVulnerableCount "$jar_result" "Java"
+                    getVulnerableCount "$ui_result" "UI"
                     getImageVulnerabilitySummary "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
 
                     summary+=${#release_tag}
@@ -211,9 +223,9 @@ function create_scan_report() {
                     jar_result=$(grep "Java" -A 3 $wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt | grep "Total")
                     ui_result=$(grep "package-lock.json" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
                     
-                    getVulnerableCount "$OS_result"
-                    getVulnerableCount "$jar_result"
-                    getVulnerableCount "$ui_result"
+                    getVulnerableCount "$OS_result" "OS"
+                    getVulnerableCount "$jar_result" "Java"
+                    getVulnerableCount "$ui_result" "UI"
                     getImageVulnerabilitySummary "$wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt"
 
                     summary+=${#release_tag}
@@ -226,9 +238,9 @@ function create_scan_report() {
                 jar_result=$(grep "Java" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
                 ui_result=$(grep "package-lock.json" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
                 
-                getVulnerableCount "$OS_result"
-                getVulnerableCount "$jar_result"
-                getVulnerableCount "$ui_result"
+                getVulnerableCount "$OS_result" "OS"
+                getVulnerableCount "$jar_result" "Java"
+                getVulnerableCount "$ui_result" "UI"
                 getImageVulnerabilitySummary "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
 
                 summary+=${#release_tag}
@@ -244,9 +256,9 @@ function create_scan_report() {
                     jar_result=$(grep "Java" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
                     ui_result=$(grep "package-lock.json" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
                     
-                    getVulnerableCount "$OS_result"
-                    getVulnerableCount "$jar_result"
-                    getVulnerableCount "$ui_result"
+                    getVulnerableCount "$OS_result" "OS"
+                    getVulnerableCount "$jar_result" "Java"
+                    getVulnerableCount "$ui_result" "UI"
                     getImageVulnerabilitySummary "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
 
                     summary+=${#release_tag}
@@ -257,9 +269,9 @@ function create_scan_report() {
                     OS_result=$(grep "docker.wso2.com/$wso2_product_name:$wso2_product_release_version" -A 3 $wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt | grep "Total") 
                     jar_result=$(grep "Java" -A 3 $wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt | grep "Total")
                     ui_result=$(grep "package-lock.json" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
-                    getVulnerableCount "$OS_result"
-                    getVulnerableCount "$jar_result"
-                    getVulnerableCount "$ui_result"
+                    getVulnerableCount "$OS_result" "OS"
+                    getVulnerableCount "$jar_result" "Java"
+                    getVulnerableCount "$ui_result" "UI"
                     getImageVulnerabilitySummary "$wso2_product_name-$wso2_product_release_version-$os-$jdk_version-scanResult.txt"
 
                     summary+=${#release_tag}
@@ -271,9 +283,9 @@ function create_scan_report() {
                 OS_result=$(grep "docker.wso2.com/$wso2_product_name:$wso2_product_release_version" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total") 
                 jar_result=$(grep "Java" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
                 ui_result=$(grep "package-lock.json" -A 3 $wso2_product_name-$wso2_product_release_version-$os-scanResult.txt | grep "Total")
-                getVulnerableCount "$OS_result"
-                getVulnerableCount "$jar_result"
-                getVulnerableCount "$ui_result"
+                getVulnerableCount "$OS_result" "OS"
+                    getVulnerableCount "$jar_result" "Java"
+                    getVulnerableCount "$ui_result" "UI"
                 getImageVulnerabilitySummary "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
 
                 summary+=${#release_tag}
@@ -370,6 +382,14 @@ function create_scan_report() {
             trivy image --severity "$severity" --ignorefile "$ignorefile_path" --timeout "$timeout" docker.wso2.com/$wso2_product_name:$wso2_product_release_version-$os | tee "$wso2_product_name-$wso2_product_release_version-$os-scanResult.txt"
             check_vulnerabilities_for_product $os
         fi
+    fi
+
+    if () {
+
+    }
+    if 
+        isCriticalVulnarabilityExist == true: then
+        return 1
     fi
 }
 
