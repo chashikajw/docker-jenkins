@@ -41,7 +41,7 @@ def call(product_key) {
             WSO2_UPDATES_SKIP_MIGRATIONS = "true"
         }
         stages {
-           
+            
             stage('download-ob-certs-from-s3') {
                 when {
                     // Download OB certs for OB accelerators
@@ -212,6 +212,23 @@ def call(product_key) {
                     String emailBodyScan = readFile "scanResult.txt"
 
                     String body = "\n"+ summaryBody + "\n \n \n" + emailBodyScan
+
+                    String criticalSummarybody = "\n"+ summaryBody + "\n \n \n"
+
+                    if (true) {
+                        send("[ WARNING ] in Docker Image Build for U2 : ${wso2_product}-${wso2_product_version} - #${env.BUILD_NUMBER}", """
+                            <font color="red"><b>--------CRITICAL vulnarability detected in the product--------</b></font></p><br>
+                            <b>Product</b> : ${wso2_product}<br>
+                            <b>Version</b> : ${wso2_product_version}<br>
+                            <b>Docker Registry</b> : https://docker.wso2.com/tags.php?repo=${wso2_product}<br>
+                            <font color="black"><b>--------Docker Image Vulnerability Scan Report--------</b></font></p><br>
+                            <pre>
+                            ${criticalSummarybody}
+                            </pre>
+                            </p><br>
+                            <p>Check console output at ${BUILD_URL} to view the results.</p>
+                        """)
+                    }
 
                     send("[ ${currentBuild.currentResult} ] in Docker Image Build for U2 : ${wso2_product}-${wso2_product_version} - #${env.BUILD_NUMBER}", """
                     <font color="black"><b>--------Build Info--------</b></font></p><br>
