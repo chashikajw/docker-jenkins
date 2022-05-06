@@ -40,126 +40,159 @@ elif [[ "${severity}" == "HIGH,CRITICAL" ]];then
     installer_arr=(0 0 0)
 elif [[ "${severity}" == "MEDIUM,HIGH,CRITICAL" ]]; then 
     installer_arr=(0 0 0 0)
+elif [[ "${severity}" == "LOW,MEDIUM,HIGH,CRITICAL" ]]; then
+    installer_arr=(0 0 0 0 0)
 else
     installer_arr=(0 0 0 0 0)
 fi
 
 function getInstallerVulnerableCount(){
-  input="$1"
-  vulnarabiltyType ="$2"
+    input="$1"
 
-  IFS=' ' read -ra arr <<< "$input"
-  
-  if [[ "${severity}" == "CRITICAL" ]]; then
-      if [[ "${arr[0]}" == "Total:" ]]; then
-          installer_arr[0]="$((${installer_arr[0]}+${arr[1]}))"
-          if installer_arr[3] > 0 && vulnarabiltyType == "Java"; then
-            isCriticalVulnarabilityExist = true
-          fi 
-      fi
-      if [[ "${arr[2]}" == "(CRITICAL:" ]]; then
-          installer_arr[1]="$((${installer_arr[1]}+${arr[3]%?}))" 
-      fi
-  elif [[ "${severity}" == "HIGH,CRITICAL" ]]; then
-      if [[ "${arr[0]}" == "Total:" ]]; then
-          installer_arr[0]="$((${installer_arr[0]}+${arr[1]}))" 
-      fi
-      if [[ "${arr[2]}" == "(HIGH:" ]]; then
-          installer_arr[1]="$((${installer_arr[1]}+${arr[3]%?}))" 
-      fi
-      if [[ "${arr[4]}" == "CRITICAL:" ]]; then
-          installer_arr[2]="$((${installer_arr[2]}+${arr[5]%?}))"
-          if installer_arr[3] > 0 && vulnarabiltyType == "Java"; then
-            isCriticalVulnarabilityExist = true
-          fi 
-      fi
-  elif [[ "${severity}" == "MEDIUM,HIGH,CRITICAL" ]]; then 
-      if [[ "${arr[0]}" == "Total:" ]]; then
-          installer_arr[0]="$((${installer_arr[0]}+${arr[1]}))" 
-      fi
-      if [[ "${arr[2]}" == "(MEDIUM:" ]]; then
-          installer_arr[1]="$((${installer_arr[1]}+${arr[3]%?}))" 
-      fi
-      if [[ "${arr[4]}" == "HIGH:" ]]; then
-          installer_arr[2]="$((${installer_arr[2]}+${arr[5]%?}))" 
-      fi
-      if [[ "${arr[6]}" == "CRITICAL:" ]]; then
-          installer_arr[3]="$((${installer_arr[3]}+${arr[7]%?}))"
-          if installer_arr[3] > 0 && vulnarabiltyType == "Java"; then
-            isCriticalVulnarabilityExist = true
-          fi
+    IFS=' ' read -ra arr <<< "$input"
 
-      fi
-  fi
+    if [[ "${severity}" == "CRITICAL" ]]; then
+        if [[ "${arr[0]}" == "Total:" ]]; then
+            installer_arr[0]="$((${installer_arr[0]}+${arr[1]}))" 
+        fi
+        if [[ "${arr[2]}" == "(CRITICAL:" ]]; then
+            installer_arr[1]="$((${installer_arr[1]}+${arr[3]%?}))" 
+        fi
+    elif [[ "${severity}" == "HIGH,CRITICAL" ]]; then
+        if [[ "${arr[0]}" == "Total:" ]]; then
+            installer_arr[0]="$((${installer_arr[0]}+${arr[1]}))" 
+        fi
+        if [[ "${arr[2]}" == "(HIGH:" ]]; then
+            installer_arr[1]="$((${installer_arr[1]}+${arr[3]%?}))" 
+        fi
+        if [[ "${arr[4]}" == "CRITICAL:" ]]; then
+            installer_arr[2]="$((${installer_arr[2]}+${arr[5]%?}))" 
+        fi
+    elif [[ "${severity}" == "MEDIUM,HIGH,CRITICAL" ]]; then 
+        if [[ "${arr[0]}" == "Total:" ]]; then
+            installer_arr[0]="$((${installer_arr[0]}+${arr[1]}))" 
+        fi
+        if [[ "${arr[2]}" == "(MEDIUM:" ]]; then
+            installer_arr[1]="$((${installer_arr[1]}+${arr[3]%?}))" 
+        fi
+        if [[ "${arr[4]}" == "HIGH:" ]]; then
+            installer_arr[2]="$((${installer_arr[2]}+${arr[5]%?}))" 
+        fi
+        if [[ "${arr[6]}" == "CRITICAL:" ]]; then
+            installer_arr[3]="$((${installer_arr[3]}+${arr[7]%?}))" 
+        fi
+    elif [[ "${severity}" == "LOW,MEDIUM,HIGH,CRITICAL" ]]; then
+        if [[ "${arr[0]}" == "Total:" ]]; then
+            installer_arr[0]="$((${installer_arr[0]}+${arr[1]}))" 
+        fi
+        if [[ "${arr[2]}" == "(LOW:" ]]; then
+            installer_arr[1]="$((${installer_arr[1]}+${arr[3]%?}))" 
+        fi
+        if [[ "${arr[4]}" == "MEDIUM:" ]]; then
+            installer_arr[2]="$((${installer_arr[2]}+${arr[5]%?}))" 
+        fi
+        if [[ "${arr[6]}" == "HIGH:" ]]; then
+            installer_arr[3]="$((${installer_arr[3]}+${arr[7]%?}))" 
+        fi
+        if [[ "${arr[8]}" == "CRITICAL:" ]]; then
+            installer_arr[4]="$((${installer_arr[4]}+${arr[9]%?}))" 
+        fi
+    fi
 
 }
 
 function getImageVulnerabilitySummary(){
-  inp="$1"
-  while IFS= read -r j; do 
-      getInstallerVulnerableCount "$j"
-  done < <(grep "home/wso2carbon/${wso2_product_name}-${wso2_product_version}/bin" -A 3 ${inp} | grep "Total")
+    inp="$1"
+    while IFS= read -r j; do 
+        getInstallerVulnerableCount "$j"
+    done < <(grep "home/wso2carbon/${wso2_product_name}-${wso2_product_version}/bin" -A 3 ${inp} | grep "Total")
 
-  for ((i=0;i<${#installer_arr[@]};i++));
-      do
-          summary+="${installer_arr[i]} "
-      done
+    for ((i=0;i<${#installer_arr[@]};i++));
+        do
+            summary+="${installer_arr[i]} "
+        done
 }
 
 function getVulnerableCount(){
-  inp="$1"
-  
-  IFS=' ' read -ra arr <<< "$inp"
-  
-  if [[ "${severity}" == "CRITICAL" ]]; then
-      if [[ "${arr[0]}" == "Total:" ]]; then
-          summary+="${arr[1]} "
-      else
-          summary+="0 "
-      fi
-      if [[ "${arr[2]}" == "(CRITICAL:" ]]; then
-          summary+="${arr[3]%?} "
-      else
-          summary+="0 "
-      fi
-  elif [[ "${severity}" == "HIGH,CRITICAL" ]]; then
-      if [[ "${arr[0]}" == "Total:" ]]; then
-          summary+="${arr[1]} "
-      else
-          summary+="0 "
-      fi
-      if [[ "${arr[2]}" == "(HIGH:" ]]; then
-          summary+="${arr[3]%?} "
-      else
-          summary+="0 "
-      fi
-      if [[ "${arr[4]}" == "CRITICAL:" ]]; then
-          summary+="${arr[5]%?} "
-      else
-          summary+="0 "
-      fi
-  elif [[ "${severity}" == "MEDIUM,HIGH,CRITICAL" ]]; then 
-      if [[ "${arr[0]}" == "Total:" ]]; then
-          summary+="${arr[1]} "
-      else
-          summary+="0 "
-      fi
-      if [[ "${arr[2]}" == "(MEDIUM:" ]]; then
-          summary+="${arr[3]%?} "
-      else
-          summary+="0 "
-      fi
-      if [[ "${arr[4]}" == "HIGH:" ]]; then
-          summary+="${arr[5]%?} "
-      else
-          summary+="0 "
-      fi
-      if [[ "${arr[6]}" == "CRITICAL:" ]]; then
-          summary+="${arr[7]%?} "
-      else
-          summary+="0 "
-      fi
-  fi
+    inp="$1"
+    
+    IFS=' ' read -ra arr <<< "$inp"
+    
+    if [[ "${severity}" == "CRITICAL" ]]; then
+        if [[ "${arr[0]}" == "Total:" ]]; then
+            summary+="${arr[1]} "
+        else
+            summary+="0 "
+        fi
+        if [[ "${arr[2]}" == "(CRITICAL:" ]]; then
+            summary+="${arr[3]%?} "
+        else
+            summary+="0 "
+        fi
+    elif [[ "${severity}" == "HIGH,CRITICAL" ]]; then
+        if [[ "${arr[0]}" == "Total:" ]]; then
+            summary+="${arr[1]} "
+        else
+            summary+="0 "
+        fi
+        if [[ "${arr[2]}" == "(HIGH:" ]]; then
+            summary+="${arr[3]%?} "
+        else
+            summary+="0 "
+        fi
+        if [[ "${arr[4]}" == "CRITICAL:" ]]; then
+            summary+="${arr[5]%?} "
+        else
+            summary+="0 "
+        fi
+    elif [[ "${severity}" == "MEDIUM,HIGH,CRITICAL" ]]; then 
+        if [[ "${arr[0]}" == "Total:" ]]; then
+            summary+="${arr[1]} "
+        else
+            summary+="0 "
+        fi
+        if [[ "${arr[2]}" == "(MEDIUM:" ]]; then
+            summary+="${arr[3]%?} "
+        else
+            summary+="0 "
+        fi
+        if [[ "${arr[4]}" == "HIGH:" ]]; then
+            summary+="${arr[5]%?} "
+        else
+            summary+="0 "
+        fi
+        if [[ "${arr[6]}" == "CRITICAL:" ]]; then
+            summary+="${arr[7]%?} "
+        else
+            summary+="0 "
+        fi
+    elif [[ "${severity}" == "LOW,MEDIUM,HIGH,CRITICAL" ]]; then 
+        if [[ "${arr[0]}" == "Total:" ]]; then
+            summary+="${arr[1]} "
+        else
+            summary+="0 "
+        fi
+        if [[ "${arr[2]}" == "(LOW:" ]]; then
+            summary+="${arr[3]%?} "
+        else
+            summary+="0 "
+        fi
+        if [[ "${arr[4]}" == "MEDIUM:" ]]; then
+            summary+="${arr[5]%?} "
+        else
+            summary+="0 "
+        fi
+        if [[ "${arr[6]}" == "HIGH:" ]]; then
+            summary+="${arr[7]%?} "
+        else
+            summary+="0 "
+        fi
+        if [[ "${arr[8]}" == "CRITICAL:" ]]; then
+            summary+="${arr[9]%?} "
+        else
+            summary+="0 "
+        fi
+    fi
 }
 
 ${DOCKER} images

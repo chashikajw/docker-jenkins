@@ -41,7 +41,7 @@ def call(product_key) {
             WSO2_UPDATES_SKIP_MIGRATIONS = "true"
         }
         stages {
-            
+           
             stage('download-ob-certs-from-s3') {
                 when {
                     // Download OB certs for OB accelerators
@@ -157,6 +157,12 @@ def call(product_key) {
             stage('Build-Scan-and-Push-image') {
                 steps {
                     script {
+
+                        sh """
+                            rm -rf scanResult.txt
+                            rm -rf summaryText.txt
+                            rm -rf summaryOut.txt
+                        """
                         build_script = new CommonUtils()
                         severity = build_script.get_severity(wso2_product, wso2_product_version)
                         product_profile_docker_homes = build_script.get_product_docker_home_update2(wso2_product, wso2_product_version)
@@ -261,9 +267,6 @@ def create_build_job(build_script, wso2_product, wso2_product_version, os_platfo
                         image_scan_script = libraryResource "${SCRIPT_FILE_LOCATION}/image-scan-updated.sh"
                         writeFile file: './image-scan-updated.sh', text: image_scan_script
                         sh """
-                            rm -rf scanResult.txt
-                            rm -rf summaryText.txt
-                            rm -rf summaryOut.txt
                             chmod +x ${WORKSPACE}/image-scan-updated.sh
                         """
                         // Status can be used to break the build 
@@ -300,7 +303,7 @@ def create_build_job(build_script, wso2_product, wso2_product_version, os_platfo
                             <b>Docker Registry</b> : https://docker.wso2.com/tags.php?repo=${wso2_product}<br>
                             <font color="black"><b>--------Docker Image Vulnerability Scan Report--------</b></font></p><br>
                             <pre>
-                            check the report
+                            check the build report
                             </pre>
                             </p><br>
                             <p>Check console output at ${BUILD_URL} to view the results.</p>
@@ -309,9 +312,7 @@ def create_build_job(build_script, wso2_product, wso2_product_version, os_platfo
                         sh """
                             echo "Trivy scan has CRITICAL vulnerabilities. Promoting Docker image to Push Stage."
                         """
-
-                        build_script.add_images(success_map, wso2_product, os_platform_name, profile, wso2_product_version, is_multi_jdk_required, jdk_version)
-                        // build_script.add_images(failure_map, wso2_product, os_platform_name, profile, wso2_product_version, is_multi_jdk_required, jdk_version)
+                        //build_script.add_images(failure_map, wso2_product, os_platform_name, profile, wso2_product_version, is_multi_jdk_required, jdk_version)
                     }
                 }
             } 

@@ -57,6 +57,12 @@ def call(product_key) {
             stage('Build-Scan-and-Push-image') {
                 steps {
                     script {
+
+                        sh """
+                            rm -rf scanResult.txt
+                            rm -rf summaryText.txt
+                            rm -rf summaryOut.txt
+                        """
                         build_script = new CommonUtils()
                         severity = build_script.get_severity(wso2_product, wso2_product_version)
                         product_profile_docker_homes = build_script.get_product_docker_home(wso2_product, wso2_product_version)
@@ -172,9 +178,6 @@ def create_build_job(build_script, wso2_product, wso2_product_version, os_platfo
                         def release_version = docker_resources_git_release_tag.split(/\./)[3]
                         writeFile file: './image-scan-updated.sh', text: image_scan_script
                         sh """
-                            rm -rf scanResult.txt
-                            rm -rf summaryText.txt
-                            rm -rf summaryOut.txt
                             chmod +x ${WORKSPACE}/image-scan-updated.sh
                         """
                         // Status can be used to break the build 
@@ -203,7 +206,7 @@ def create_build_job(build_script, wso2_product, wso2_product_version, os_platfo
                         sh """
                             echo "Pushing blocked due to vulnerabilities"
                         """
-                        // build_script.add_images(failure_map, wso2_product, os_platform_name, profile, wso2_product_version, is_multi_jdk_required, jdk_version)
+                        //build_script.add_images(failure_map, wso2_product, os_platform_name, profile, wso2_product_version, is_multi_jdk_required, jdk_version)
                     }
                 }
             } 

@@ -563,9 +563,9 @@ def get_severity(wso2_product, wso2_product_version){
         } else if (wso2_product_version == "5.10.0"){
             return "MEDIUM,HIGH,CRITICAL"    
         } else if (wso2_product_version == "5.9.0"){
-            return "MEDIUM,HIGH,CRITICAL"        
+            return "HIGH,CRITICAL"        
         } else {
-            return "MEDIUM,HIGH,CRITICAL"        
+            return "HIGH,CRITICAL"        
         }
     } else if(wso2_product == "wso2am") {
        return "MEDIUM,HIGH,CRITICAL"
@@ -610,8 +610,11 @@ def generateTitleRow(max_len, severity, outFile){
         outFile+=("+" + "-".multiply(max_len+2) + "+" + "-".multiply(8) + "+" + "-".multiply(12) + "+" + "-".multiply(7) + "+" + "-".multiply(10) + "+" + "-".multiply(6) + "+" + "-".multiply(8) + "+\n")
         outFile+=("|" + " "*(max_len-5).intdiv(2) + "Release" + " "*(max_len-5-(max_len-5).intdiv(2))+"|" + " ".multiply(3)+"OS" + " ".multiply(3)+"|" + " " + "VUL. TYPE" + " ".multiply(2) + "|" + " " + "TOTAL" + " " + "|" + " " + "CRITICAL" +" " + "|" + " " + "HIGH" + " " + "|" + " " + "MEDIUM" + " " + "|\n")
         outFile+=("+" + "-".multiply(max_len+2) + "+" + "-".multiply(8) + "+" + "-".multiply(12) + "+" + "-".multiply(7) + "+" + "-".multiply(10) + "+" + "-".multiply(6) + "+" + "-".multiply(8) + "+\n")
+    } else if(severity == "LOW,MEDIUM,HIGH,CRITICAL"){
+        outFile+=("+" + "-".multiply(max_len+2) + "+" + "-".multiply(8) + "+" + "-".multiply(12) + "+" + "-".multiply(7) + "+" + "-".multiply(10) + "+" + "-".multiply(6) + "+" + "-".multiply(8) + "+" + "-".multiply(5) + "+\n")
+        outFile+=("|" + " "*(max_len-5).intdiv(2) + "Release" + " "*(max_len-5-(max_len-5).intdiv(2))+"|" + " ".multiply(3)+"OS" + " ".multiply(3)+"|" + " " + "VUL. TYPE" + " ".multiply(2) + "|" + " " + "TOTAL" + " " + "|" + " " + "CRITICAL" +" " + "|" + " " + "HIGH" + " " + "|" + " " + "MEDIUM" + " " + "|" + " " + "LOW" + " " + "|\n")
+        outFile+=("+" + "-".multiply(max_len+2) + "+" + "-".multiply(8) + "+" + "-".multiply(12) + "+" + "-".multiply(7) + "+" + "-".multiply(10) + "+" + "-".multiply(6) + "+" + "-".multiply(8) + "+" + "-".multiply(5) + "+\n")
     }
-
     return outFile
 }        
 
@@ -725,7 +728,33 @@ def generateRows(row_data, max_len, severity, outFile){
         outFile += (release_cell[6] + ui_total[0] + ui_critical[0] + ui_high[0] + ui_medium[0] + "\n")
         outFile += (release_cell[7] + ui_total[1] + ui_critical[1] + ui_high[1] + ui_medium[1] + "\n")
     }
+    else if (severity == "LOW,MEDIUM,HIGH,CRITICAL"){
 
+        os_total = generateCell(7, row_data[3])
+        os_critical = generateCell(10, row_data[7])
+        os_high  = generateCell(6, row_data[6])
+        os_medium = generateCell(8, row_data[5])
+        os_low = generateCell(5, row_data[4])
+
+        app_total = generateCell(7, row_data[8])
+        app_critical = generateCell(10, row_data[12])
+        app_high = generateCell(6, row_data[11])
+        app_medium = generateCell(8, row_data[10])
+        app_low = generateCell(5, row_data[9])
+
+        installer_total = generateCell(7, row_data[13])
+        installer_critical = generateCell(10, row_data[17])
+        installer_high = generateCell(6, row_data[16])
+        installer_medium = generateCell(8, row_data[15])
+        installer_low = generateCell(5, row_data[14])
+
+        outFile += (release_cell[0] + os_total[0] + os_critical[0] + os_high[0] + os_medium[0] + os_low[0] +"\n")
+        outFile += (release_cell[1] + os_total[1] + os_critical[1] + os_high[1] + os_medium[1] + os_low[1] +"\n")
+        outFile += (release_cell[2] + app_total[0] + app_critical[0] + app_high[0] + app_medium[0] + app_low[0] +"\n")
+        outFile += (release_cell[3] + app_total[1] + app_critical[1] + app_high[1] + app_medium[1] + app_low[1] +"\n")
+        outFile += (release_cell[4] + installer_total[0] + installer_critical[0] + installer_high[0] + installer_medium[0] + installer_low[0] +"\n")
+        outFile += (release_cell[5] + installer_total[1] + installer_critical[1] + installer_high[1] + installer_medium[1] + installer_low[1] +"\n")
+    }
     return outFile
 }
 
